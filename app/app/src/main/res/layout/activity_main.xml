@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_vertical_margin"
+    tools:context="it.cnr.iit.broadcastsender.MainActivity"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/group_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CREATE  GROUP"
+            android:onClick="onCreateGroupClicked"/>
+
+        <TextView
+            android:id="@+id/group_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/group_button"
+            android:layout_alignBottom="@id/group_button"
+            android:layout_toRightOf="@id/group_button"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/sender_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" SENDER  MODE "
+            android:onClick="onSenderModeClicked"/>
+
+        <TextView
+            android:id="@+id/sender_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/sender_button"
+            android:layout_alignBottom="@id/sender_button"
+            android:layout_toRightOf="@id/sender_button"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/receiver_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RECEIVER MODE"
+            android:onClick="onReceiverModeClicked"/>
+
+        <TextView
+            android:id="@+id/receiver_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/receiver_button"
+            android:layout_alignBottom="@id/receiver_button"
+            android:layout_toRightOf="@id/receiver_button"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="          STOP           "
+            android:onClick="onStopClicked"/>
+
+        <TextView
+            android:id="@+id/stop_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/stop_button"
+            android:layout_alignBottom="@id/stop_button"
+            android:layout_toRightOf="@id/stop_button"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>
