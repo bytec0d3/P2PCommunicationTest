@@ -4,14 +4,22 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by mattia on 14/01/17.
  */
 public class BgService extends Service {
+
+    private static final String TAG = "BgService";
 
     public static final String INTENT_MODE_EXTRA = "mode";
     public static final String MODE_SENDER = "S";
@@ -25,53 +33,92 @@ public class BgService extends Service {
     private SenderThread sender;
     private BatteryReceiver batteryReceiver;
 
+    private final IBinder mBinder = new LocalBinder();
+
+    public class LocalBinder extends Binder {
+        public BgService getService() {
+            return BgService.this;
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         acquireLocks();
 
-        String mode = SharedPrefsController.getMode(getApplicationContext());
+        /*String mode = SharedPrefsController.getMode(getApplicationContext());
 
         if(intent != null){
             mode = intent.getStringExtra(INTENT_MODE_EXTRA);
             SharedPrefsController.setMode(getApplicationContext(), mode);
         }
 
-        switch (mode){
+        if(mode != null) {
 
-            case MODE_RECEIVER:
-                receiver = new Thread(){
-                    @Override
-                    public void run() {
-                        new UDPReceiver().listen();
-                    }
+            switch (mode) {
+                case MODE_RECEIVER:
+                    modeReceiver();
+                    break;
 
-                };
-                receiver.start();
-                startBatteryReceiver();
+                case MODE_SENDER:
+                    modeSender(null);
+                    break;
 
-                break;
+                case MODE_STOP:
+                    if (sender != null) sender.setRunning(false);
+                    stopBatteryReceiver();
+            }
+        }
+        */
 
-            case MODE_SENDER:
-                if(sender == null){
-                    sender = new SenderThread(this);
-                    sender.start();
+        modeReceiver();
 
-                }else {
-                    sender.setRunning(true);
-                    sender.start();
-                }
-                startBatteryReceiver();
+        Log.e(TAG, "Sending: "+SharedPrefsController.getSending(getApplicationContext()));
 
-                break;
+        if(SharedPrefsController.getSending(getApplicationContext())) {
 
-            case MODE_STOP:
-                if(sender != null) sender.setRunning(false);
-                stopBatteryReceiver();
+            Set<String> addrSet = SharedPrefsController.getUnicastAddresses(getApplicationContext());
+            List<String> addresses = null;
+
+            if (addrSet != null) {
+                addresses = new ArrayList<>();
+                addresses.addAll(addrSet);
+            }
+
+            modeSender(addresses);
         }
 
-
         return START_STICKY;
+    }
+
+    public void modeSender(List<String> unicastAddresses){
+        if(sender == null){
+            sender = new SenderThread(this);
+            sender.start();
+
+        }else {
+            sender.setRunning(true);
+        }
+
+        sender.setUnicastAddresses(unicastAddresses);
+
+        startBatteryReceiver();
+    }
+
+    public void modeReceiver(){
+        receiver = new Thread(){
+            @Override
+            public void run() {
+                new UDPReceiver(getApplicationContext()).listen();
+            }
+
+        };
+        receiver.start();
+        startBatteryReceiver();
+    }
+
+    public void stopSending(){
+        if(sender != null) sender.setRunning(false);
     }
 
     private void acquireLocks(){
@@ -89,7 +136,7 @@ public class BgService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     /**

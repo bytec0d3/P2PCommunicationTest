@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -14,14 +15,20 @@ import java.util.Random;
 class SenderThread extends Thread {
 
     private static final String TAG = "SenderThread";
-    private static final int SLEEP_MS = 5;
+    private static final int SLEEP_MS = 100;
 
     private boolean running = true;
 
     private UDPSender sender;
 
+    private List<String> unicastAddresses;
+
     SenderThread(Context context){
         this.sender = new UDPSender(context);
+    }
+
+    public void setUnicastAddresses(List<String> unicastAddresses){
+        this.unicastAddresses = unicastAddresses;
     }
 
     @Override
@@ -33,9 +40,21 @@ class SenderThread extends Thread {
 
             byte[] data = new byte[1472];
             new Random().nextBytes(data);
-            LogManager.getInstance().logData("Sending data", LogManager.LOG_TYPE.TYPE_NETWORK);
 
-            sender.sendBroadcast(data);
+            if(this.unicastAddresses != null){
+
+                for(String addressString : unicastAddresses){
+
+                    try {
+                        InetAddress address = InetAddress.getByName(addressString);
+                        sender.sendMessage(address, data, false);
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else {
+                sender.sendBroadcast(data);
+            }
             SystemClock.sleep(SLEEP_MS);
         }
     }

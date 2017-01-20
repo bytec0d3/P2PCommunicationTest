@@ -14,10 +14,12 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import it.cnr.iit.broadcastsender.controller.WifiController;
+
 /**
  * Created by mattia on 11/01/17.
  */
-class UDPSender {
+public class UDPSender {
 
     private static final String TAG = "UDPSender";
     private static final int PORT = 6666;
@@ -25,7 +27,7 @@ class UDPSender {
     private Context context;
     private DatagramSocket socket;
 
-    UDPSender(Context context){
+    public UDPSender(Context context){
         this.context = context;
 
         try {
@@ -35,32 +37,38 @@ class UDPSender {
         }
     }
 
-    void sendBroadcast(byte[] data) {
-
-        sendMessage(getBroadcastAddress(), data, true);
+    public boolean sendBroadcast(byte[] data) {
+        InetAddress address = WifiController.getInstance(context).getNetworkBCastAddress();
+        //Log.d(TAG,"Sending bradcast (" + address+ ") packet.");
+        return sendMessage(address, data, true);
     }
 
-    void sendMessage(InetAddress address, byte[] data, boolean broadcast){
+    public void closeSocket(){this.socket.close();}
+
+    public boolean sendMessage(InetAddress address, byte[] data, boolean broadcast){
 
         try {
             //Open a random port to send the package
-            if(broadcast) socket.setBroadcast(true);
+            socket.setBroadcast(broadcast);
             DatagramPacket sendPacket = new DatagramPacket(data, data.length, address, PORT);
             socket.send(sendPacket);
-            Log.d(TAG,"Broadcast packet sent to: " + address.getHostAddress());
+            //Log.d(TAG,"Broadcast packet sent to: " + address.getHostAddress());
 
             /*String msg = (sendPacket.getLength()/1000.0) + " byte TO " + address.getHostAddress();
             Intent i = new Intent(MainActivity.INTENT_MSG_SNT);
             i.putExtra("message", msg);
             LocalBroadcastManager.getInstance(context).sendBroadcast(i);*/
 
+            return true;
 
         } catch (SocketException e) {
             Log.e(TAG, "SocketException: " + e.getMessage());
-            LogManager.getInstance().logData(e.getMessage(), LogManager.LOG_TYPE.TYPE_ERROR);
+            return false;
+            //LogManager.getInstance().logData(e.getMessage(), LogManager.LOG_TYPE.TYPE_ERROR);
         }catch (IOException e){
             Log.e(TAG, "IOException: " + e.getMessage());
-            LogManager.getInstance().logData(e.getMessage(), LogManager.LOG_TYPE.TYPE_ERROR);
+            return false;
+            //LogManager.getInstance().logData(e.getMessage(), LogManager.LOG_TYPE.TYPE_ERROR);
         }
     }
 
@@ -80,7 +88,7 @@ class UDPSender {
             inetAddress = InetAddress.getByAddress(quads);
         } catch (UnknownHostException e) {
             Log.e(TAG, e.getMessage());
-            LogManager.getInstance().logData(e.getMessage(), LogManager.LOG_TYPE.TYPE_ERROR);
+            //LogManager.getInstance().logData(e.getMessage(), LogManager.LOG_TYPE.TYPE_ERROR);
         }
 
         return inetAddress;

@@ -1,4 +1,4 @@
-package it.cnr.iit.broadcastsender;
+package it.cnr.iit.broadcastsender.view;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -18,6 +18,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import it.cnr.iit.broadcastsender.BgService;
+import it.cnr.iit.broadcastsender.R;
+import it.cnr.iit.broadcastsender.SharedPrefsController;
+import it.cnr.iit.broadcastsender.controller.WifiController;
 
 public class MainActivity extends AppCompatActivity {
 
