@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startBgService(String mode){
+
+        SharedPrefsController.setSending(this, true);
+
         Intent intent = new Intent(this, BgService.class);
         intent.putExtra(BgService.INTENT_MODE_EXTRA, mode);
         startService(intent);

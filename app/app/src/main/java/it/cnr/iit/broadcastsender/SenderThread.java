@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -19,12 +20,16 @@ class SenderThread extends Thread {
 
     private boolean running = true;
 
-    private UDPSender sender;
+    //private UDPSender sender;
 
     private List<String> unicastAddresses;
 
+    private List<UDPSender> senderSockets = new ArrayList<>();
+    private Context context;
+
     SenderThread(Context context){
-        this.sender = new UDPSender(context);
+        this.context = context;
+        //this.sender = new UDPSender(context);
     }
 
     public void setUnicastAddresses(List<String> unicastAddresses){
@@ -33,6 +38,18 @@ class SenderThread extends Thread {
 
     @Override
     public void run() {
+
+        for(String unicastAddress : unicastAddresses){
+            UDPSender sender = new UDPSender(context);
+
+            try {
+                InetAddress address = InetAddress.getByName(unicastAddress);
+                sender.connect(address);
+                senderSockets.add(sender);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+        }
 
         while(true){
 
@@ -43,18 +60,12 @@ class SenderThread extends Thread {
 
             if(this.unicastAddresses != null){
 
-                for(String addressString : unicastAddresses){
-
-                    try {
-                        InetAddress address = InetAddress.getByName(addressString);
-                        sender.sendMessage(address, data, false);
-                    } catch (UnknownHostException e) {
-                        e.printStackTrace();
-                    }
+                for(UDPSender sender : senderSockets){
+                    sender.send(data);
                 }
-            }else {
-                sender.sendBroadcast(data);
-            }
+            }//else {
+              //  sender.sendBroadcast(data);
+            //}
             SystemClock.sleep(SLEEP_MS);
         }
     }

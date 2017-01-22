@@ -92,15 +92,15 @@ public class BgService extends Service {
     }
 
     public void modeSender(List<String> unicastAddresses){
+
         if(sender == null){
             sender = new SenderThread(this);
+            sender.setUnicastAddresses(unicastAddresses);
             sender.start();
 
         }else {
             sender.setRunning(true);
         }
-
-        sender.setUnicastAddresses(unicastAddresses);
 
         startBatteryReceiver();
     }
@@ -118,7 +118,10 @@ public class BgService extends Service {
     }
 
     public void stopSending(){
-        if(sender != null) sender.setRunning(false);
+        if(sender != null) {
+            sender.setRunning(false);
+            sender = null;
+        }
     }
 
     private void acquireLocks(){

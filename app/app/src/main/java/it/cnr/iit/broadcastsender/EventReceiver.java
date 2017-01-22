@@ -14,8 +14,6 @@ import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import java.util.Iterator;
-
 import it.cnr.iit.broadcastsender.controller.WifiController;
 import it.cnr.iit.broadcastsender.view.MainActivity;
 

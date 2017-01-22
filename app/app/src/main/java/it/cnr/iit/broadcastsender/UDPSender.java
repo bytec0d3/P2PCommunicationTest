@@ -37,6 +37,19 @@ public class UDPSender {
         }
     }
 
+    public void connect(InetAddress addres){
+        socket.connect(addres, PORT);
+    }
+
+    public void send(byte[] data){
+        try {
+            socket.send(new DatagramPacket(data, data.length));
+            Log.d(TAG, "Sending to: "+socket.getInetAddress());
+        } catch (IOException e) {
+            Log.e(TAG, "Error sengind: "+e.getMessage());
+        }
+    }
+
     public boolean sendBroadcast(byte[] data) {
         InetAddress address = WifiController.getInstance(context).getNetworkBCastAddress();
         //Log.d(TAG,"Sending bradcast (" + address+ ") packet.");
