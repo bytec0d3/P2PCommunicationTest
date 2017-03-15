@@ -44,7 +44,8 @@ public class UDPSender {
     public void send(byte[] data){
         try {
             socket.send(new DatagramPacket(data, data.length));
-            Log.d(TAG, "Sending to: "+socket.getInetAddress());
+            LogManager.getInstance().logData((data.length / 1000.0) + " KB to " + socket.getInetAddress().getHostAddress(),
+                    LogManager.LOG_TYPE.TYPE_NETWORK_SENT);
         } catch (IOException e) {
             Log.e(TAG, "Error sengind: "+e.getMessage());
         }

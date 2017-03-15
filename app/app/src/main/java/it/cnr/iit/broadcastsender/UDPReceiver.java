@@ -65,7 +65,8 @@ class UDPReceiver{
                     String msg = (packet.getLength() / 1000.0) + " KB FROM "
                             + packet.getAddress().getHostAddress();
                     Log.d(TAG, msg);
-                    LogManager.getInstance().logData(msg, LogManager.LOG_TYPE.TYPE_NETWORK);
+                    LogManager.getInstance().logData(msg,
+                            LogManager.LOG_TYPE.TYPE_NETWORK_RECEIVED);
                 }
             }
 

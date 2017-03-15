@@ -60,24 +60,25 @@ public class EventReceiver extends BroadcastReceiver {
 
             }else if(WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)){
 
-                NetworkInfo nwInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if(NetworkInfo.State.CONNECTED.equals(nwInfo.getState()) &&
-                        nwInfo.getType() == ConnectivityManager.TYPE_WIFI){
+                //NetworkInfo nwInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                //if(NetworkInfo.State.CONNECTED.equals(nwInfo.getState()) &&
+                //        nwInfo.getType() == ConnectivityManager.TYPE_WIFI){
 
-                    WifiInfo wifiInfo = WifiController.getInstance(context).getConnectionInfo();
+                WifiInfo wifiInfo = WifiController.getInstance(context).getConnectionInfo();
 
-                    if(wifiInfo.getSSID().contains("DIRECT")) {
+                if(wifiInfo.getSSID().contains("DIRECT") || wifiInfo.getSSID().contains("testAP")) {
 
-                        final Context thisContext = context;
+                    final Context thisContext = context;
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                WifiController.getInstance(thisContext).sendHelloMessage();
-                            }
-                        }, 1000);
-                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            WifiController.getInstance(thisContext).sendHelloMessage();
+                        }
+                    }, 1000);
                 }
+
+                //}
             }
         }
     }

@@ -21,7 +21,7 @@ class LogManager {
 
     private static LogManager instance;
 
-    enum LOG_TYPE {TYPE_BATTERY, TYPE_NETWORK, TYPE_ERROR}
+    enum LOG_TYPE {TYPE_BATTERY, TYPE_NETWORK_RECEIVED, TYPE_NETWORK_SENT, TYPE_ERROR}
 
     private LogManager(){
 
@@ -74,8 +74,11 @@ class LogManager {
             case TYPE_BATTERY:
                 fileName = "battery_";
                 break;
-            case TYPE_NETWORK:
-                fileName = "network_";
+            case TYPE_NETWORK_RECEIVED:
+                fileName = "received_";
+                break;
+            case TYPE_NETWORK_SENT:
+                fileName = "sent_";
                 break;
             case TYPE_ERROR:
                 fileName = "errors_";

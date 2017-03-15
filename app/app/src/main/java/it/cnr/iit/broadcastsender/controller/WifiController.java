@@ -75,18 +75,21 @@ public class WifiController {
 
     public void setNetworkBCastAddress(String source){
 
-        String prefix;
+        if(source != null) {
 
-        if(source.contains("/")) prefix = source.substring(1, source.lastIndexOf("."));
-        else prefix = source.substring(0, source.lastIndexOf("."));
+            String prefix;
 
-        try {
-            this.networkBCastAddress = InetAddress.getByName(prefix + ".255");
-            this.apAddress = InetAddress.getByName(prefix + ".1");
-            Log.d(TAG, "Network BCast address: "+this.networkBCastAddress);
+            if (source.contains("/")) prefix = source.substring(1, source.lastIndexOf("."));
+            else prefix = source.substring(0, source.lastIndexOf("."));
 
-        } catch (UnknownHostException e) {
-            Log.e(TAG, "setNetworkBCastAddress: "+e.getMessage());
+            try {
+                this.networkBCastAddress = InetAddress.getByName(prefix + ".255");
+                this.apAddress = InetAddress.getByName(prefix + ".1");
+                Log.d(TAG, "Network BCast address: " + this.networkBCastAddress);
+
+            } catch (UnknownHostException e) {
+                Log.e(TAG, "setNetworkBCastAddress: " + e.getMessage());
+            }
         }
 
     }
@@ -123,9 +126,15 @@ public class WifiController {
     public void sendHelloMessage(){
         Log.d(TAG, "Sending HELLO broadcast message.");
 
-        setNetworkBCastAddress(getMyIpAddress());
+        String addr = getMyIpAddress();
 
-        final String msg = "HELLO "+this.deviceName+" "+getMyIpAddress();
+        while(addr == null){
+            addr = getMyIpAddress();
+        }
+
+        setNetworkBCastAddress(addr);
+
+        final String msg = "HELLO "+this.deviceName+" "+addr;
         final UDPSender udpSender = new UDPSender(this.context);
 
         new Thread() {
